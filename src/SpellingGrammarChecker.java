@@ -4,6 +4,14 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Font;
+import java.awt.event.*;
+
+//Spencer Added
+import java.text.BreakIterator;
+import java.io.*;
+import java.net.*;
+import javax.net.ssl.*;
+import java.util.Locale;
 
 public class SpellingGrammarChecker extends JFrame {
     private JTextField textField;
@@ -53,6 +61,77 @@ public class SpellingGrammarChecker extends JFrame {
         lblSimpleSpellingAnd.setFont(new Font("Lucida Grande", Font.BOLD | Font.ITALIC, 15));
 
         JButton btnSubmit = new JButton("Submit");
+
+	//Spencer Added
+	btnSubmit.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String contents = textArea.getText();
+				System.out.println(contents);
+				
+				try {
+					//Parse each sentence of the text area
+					contents = contents.replaceAll("\\n", " ");
+					BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.US);
+					boundary.setText(contents);
+					int start = boundary.first();
+					for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
+						String currentSentence = contents.substring(start, end);
+
+						makeConnection(currentSentence);
+					}
+				} catch (Exception exc) {
+					System.out.println(exc);
+				}
+			}
+		}
+	);
+
+	//Spencer Added
+	btnSelectFile.addActionListener(
+		new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				final JFileChooser fc = new JFileChooser();
+
+				int returnVal = fc.showOpenDialog(SpellingGrammarChecker.this);
+				
+				//Verify that the progam is allowed to open the file chooser
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					String filePath = file.getAbsolutePath();
+					
+					//Read the selected file and parse out each sentence
+					try {
+						BufferedReader inputFileRead = new BufferedReader(new FileReader(filePath));
+						String line; 
+						StringBuffer buffer = new StringBuffer();
+						
+						while ((line = inputFileRead.readLine()) != null) {
+							buffer.append(line + "\n");
+						}
+							
+						String fileAsString = buffer.toString();
+						fileAsString = fileAsString.replaceAll("\\n", " ");
+						System.out.println(fileAsString);
+						
+						BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.US);
+						boundary.setText(fileAsString);
+						int start = boundary.first();
+						for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
+							String currentSentence = fileAsString.substring(start, end);
+							
+							makeConnection(currentSentence);	
+						}
+						  
+					} catch (Exception exc) {
+						System.out.println(exc);
+					}
+					
+				}
+			}
+		}
+	);
+
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setHorizontalGroup(
                 groupLayout.createParallelGroup(Alignment.LEADING)
@@ -98,5 +177,36 @@ public class SpellingGrammarChecker extends JFrame {
         );
         getContentPane().setLayout(groupLayout);
 
+    }
+
+    //Spencer Added
+    public void makeConnection(String toCheck) throws Exception{
+	//need to parse out bad characters
+	System.out.println("---------------------------------------------------");
+		
+	//Sets up the connection and makes the POST
+	String url = "https://languagetool.org/api/v2/check";
+	toCheck = toCheck.replaceAll("\\n", "");
+	System.out.println(toCheck);
+	String toCheckUrl = toCheck.replaceAll(" ","%20");
+	System.out.println(toCheckUrl);
+
+	String urlParameters = "?&text=" + toCheckUrl + "&language=en-US";
+	
+	URL obj = new URL(url + urlParameters);
+	HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+	
+	con.setRequestMethod("POST");
+	con.setRequestProperty("User-Agent", "Mozilla/5.0");
+	con.setRequestProperty("Accept-Language", "en-US,en;q=.05");
+
+
+	
+	int responseCode = con.getResponseCode();
+	System.out.println("\nSending 'POST' request to URL : " + url);
+	System.out.println("Post parameters : " + urlParameters);
+	System.out.println("Response Code : " + responseCode);
+//	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
+		
     }
 }
