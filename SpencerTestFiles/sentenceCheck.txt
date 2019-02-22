@@ -1,0 +1,3 @@
+This file is a test of BreakIterator. It functions to verify that this file is being split by each sentence. This is a test. Test test test... asdfjf a;
+Test continued. Yada yada yada, yeet. Hello? HEY! Still testing 
+and testing.
