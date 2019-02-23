@@ -213,29 +213,76 @@ public class SpellingGrammarChecker extends JFrame {
 	System.out.println("Response Code : " + responseCode);
 //	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 	
+    	// Added by Monis 
 	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	
+	String inputLine;
+    	StringBuffer response = new StringBuffer();
 
-    String inputLine;
-    StringBuffer response = new StringBuffer();
+    	while ((inputLine = in.readLine()) != null){
+		response.append(inputLine);
+    	}
+	
+	System.out.println(response.toString());
 
-    while ((inputLine = in.readLine()) != null){
-        response.append(inputLine);
-    }
-    // Added by Monis
-    if (response.indexOf("replacements")>0) {
-    	
-	    String[] op = response.substring(response.indexOf("replacements")+15,response.indexOf("offset")-3).split(",");
-	    ArrayList<String> words = new ArrayList<String>();
-	    
-	    for (int i=0; i<op.length; i++) {
-	    
-	    	words.add(op[i].substring(op[i].indexOf(":\"")+2, op[i].indexOf("\"}")));	
-	    }
-	    for (String w : words) {
-	    	
-	    	System.out.println(w);    	
-	    }
-    }
-    else{System.out.println("\nNo Error!");}
+	String toFind = "message";
+	int index = 0;
+	int messageCount = 0;
+	
+	//Added by Spencer
+	while (index != -1) {
+		index = response.indexOf(toFind, index);
+
+		if (index != -1) {
+			messageCount++;
+			index += toFind.length();
+		}
+
+	}
+
+	String tempResponse = response.toString();
+	
+	//Added by Monis
+	//Edited by Spencer
+	//parse out the possible fixes for each mistake found.
+	for (int x = 0; x < messageCount; x++){
+
+		if (tempResponse.indexOf("\"message\"") > 0) {
+			String[] op = tempResponse.substring(tempResponse.indexOf("\"message\"")-1, tempResponse.indexOf("\"ignoreForIncompleteSentence\"")+36).split(",");
+			String toRemove = "";
+
+			for (int i = 0; i < op.length; i++) {
+				toRemove = toRemove + op[i] + ",";
+			}
+			if (!(toRemove.indexOf("\"replacements\":[]") > 0)) {
+				if (toRemove.indexOf("replacements") > 0) {
+					String[] substrings = toRemove.substring(toRemove.indexOf("replacements")+15, toRemove.indexOf("offset")-3).split(",");
+					ArrayList<String> words = new ArrayList<String>();
+
+					for (int i = 0; i < substrings.length; i++) {
+						if (substrings[i].indexOf("}") > 0){
+							words.add(substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf("\"}")));
+						} else {
+							substrings[i] = substrings[i] + ">";
+							String toAdd = substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf(">")-1) + " "  + substrings[i+1].substring(substrings[i+1].indexOf(":\"")+2, substrings[i+1].indexOf("\"}"));
+
+							words.add(toAdd);
+							i++;
+						}
+					}
+					System.out.println();
+					for (String w : words) {
+						System.out.println(w);
+					}
+				}
+			}
+			else{
+				System.out.println("\nNo Error!");
+			}
+
+			tempResponse = tempResponse.replace(toRemove, "");
+
+		}
+	}
     }
 }
