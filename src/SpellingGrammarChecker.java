@@ -12,9 +12,14 @@ import java.io.*;
 import java.net.*;
 import javax.net.ssl.*;
 import java.util.Locale;
+import java.util.ArrayList;
 
 public class SpellingGrammarChecker extends JFrame {
-    private JTextField textField;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
 //    private JScrollPane scrollPane;
 
     /**
@@ -206,7 +211,31 @@ public class SpellingGrammarChecker extends JFrame {
 	System.out.println("\nSending 'POST' request to URL : " + url);
 	System.out.println("Post parameters : " + urlParameters);
 	System.out.println("Response Code : " + responseCode);
-//	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
-		
+//	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	
+	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+    String inputLine;
+    StringBuffer response = new StringBuffer();
+
+    while ((inputLine = in.readLine()) != null){
+        response.append(inputLine);
+    }
+    // Added by Monis
+    if (response.indexOf("replacements")>0) {
+    	
+	    String[] op = response.substring(response.indexOf("replacements")+15,response.indexOf("offset")-3).split(",");
+	    ArrayList<String> words = new ArrayList<String>();
+	    
+	    for (int i=0; i<op.length; i++) {
+	    
+	    	words.add(op[i].substring(op[i].indexOf(":\"")+2, op[i].indexOf("\"}")));	
+	    }
+	    for (String w : words) {
+	    	
+	    	System.out.println(w);    	
+	    }
+    }
+    else{System.out.println("\nNo Error!");}
     }
 }
