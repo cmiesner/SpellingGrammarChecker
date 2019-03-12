@@ -77,14 +77,7 @@ public class SpellingGrammarChecker extends JFrame {
 				try {
 					//Parse each sentence of the text area
 					contents = contents.replaceAll("\\n", " ");
-					BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.US);
-					boundary.setText(contents);
-					int start = boundary.first();
-					for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-						String currentSentence = contents.substring(start, end);
-
-						makeConnection(currentSentence);
-					}
+					makeConnection(contents);
 				} catch (Exception exc) {
 					System.out.println(exc);
 				}
@@ -119,15 +112,7 @@ public class SpellingGrammarChecker extends JFrame {
 						fileAsString = fileAsString.replaceAll("\\n", " ");
 						System.out.println(fileAsString);
 						
-						BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.US);
-						boundary.setText(fileAsString);
-						int start = boundary.first();
-						for (int end = boundary.next(); end != BreakIterator.DONE; start = end, end = boundary.next()) {
-							String currentSentence = fileAsString.substring(start, end);
-							
-							makeConnection(currentSentence);	
-						}
-						  
+						makeConnection(fileAsString);	
 					} catch (Exception exc) {
 						System.out.println(exc);
 					}
@@ -188,33 +173,27 @@ public class SpellingGrammarChecker extends JFrame {
     public void makeConnection(String toCheck) throws Exception{
 	//need to parse out bad characters
 	System.out.println("---------------------------------------------------");
-		
+
 	//Sets up the connection and makes the POST
-	String url = "https://languagetool.org/api/v2/check";
-	toCheck = toCheck.replaceAll("\\n", "");
-	System.out.println(toCheck);
+	String url = "http://api.grammarbot.io/v2/check?api_key=9JMF2Y56";
 	String toCheckUrl = toCheck.replaceAll(" ","%20");
-	System.out.println(toCheckUrl);
-
 	String urlParameters = "?&text=" + toCheckUrl + "&language=en-US";
-	
-	URL obj = new URL(url + urlParameters);
-	HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-	
-	con.setRequestMethod("POST");
-	con.setRequestProperty("User-Agent", "Mozilla/5.0");
-	con.setRequestProperty("Accept-Language", "en-US,en;q=.05");
 
 
-	
-	int responseCode = con.getResponseCode();
-	System.out.println("\nSending 'POST' request to URL : " + url);
-	System.out.println("Post parameters : " + urlParameters);
-	System.out.println("Response Code : " + responseCode);
-//	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-	
-    	// Added by Monis 
-	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+	URL con = new URL(url + urlParameters);
+	String line;
+	try (BufferedReader reader = new BufferedReader(new InputStreamReader(con.openStream(), "UTF-8"))) {
+		for (String newLine; (newLine = reader.readLine()) != null;) {
+			System.out.println(newLine);
+			line = newLine;
+		}
+	}
+
+		
+    	// Added by Monis
+	// Edited by Spencer
+
+	BufferedReader in = new BufferedReader(new InputStreamReader(con.openStream(), "UTF-8"));
 	
 	String inputLine;
     	StringBuffer response = new StringBuffer();
@@ -225,11 +204,11 @@ public class SpellingGrammarChecker extends JFrame {
 	
 	System.out.println(response.toString());
 
+	//Added by Spencer
 	String toFind = "message";
 	int index = 0;
 	int messageCount = 0;
 	
-	//Added by Spencer
 	while (index != -1) {
 		index = response.indexOf(toFind, index);
 
@@ -246,43 +225,43 @@ public class SpellingGrammarChecker extends JFrame {
 	//Edited by Spencer
 	//parse out the possible fixes for each mistake found.
 	for (int x = 0; x < messageCount; x++){
-
 		if (tempResponse.indexOf("\"message\"") > 0) {
-			String[] op = tempResponse.substring(tempResponse.indexOf("\"message\"")-1, tempResponse.indexOf("\"ignoreForIncompleteSentence\"")+36).split(",");
+			String[] op = tempResponse.substring(tempResponse.indexOf("\"message\"")-1, tempResponse.indexOf("}}}")).split(",");
 			String toRemove = "";
 
 			for (int i = 0; i < op.length; i++) {
 				toRemove = toRemove + op[i] + ",";
 			}
-			if (!(toRemove.indexOf("\"replacements\":[]") > 0)) {
-				if (toRemove.indexOf("replacements") > 0) {
-					String[] substrings = toRemove.substring(toRemove.indexOf("replacements")+15, toRemove.indexOf("offset")-3).split(",");
-					ArrayList<String> words = new ArrayList<String>();
 
-					for (int i = 0; i < substrings.length; i++) {
-						if (substrings[i].indexOf("}") > 0){
-							words.add(substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf("\"}")));
-						} else {
-							substrings[i] = substrings[i] + ">";
-							String toAdd = substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf(">")-1) + " "  + substrings[i+1].substring(substrings[i+1].indexOf(":\"")+2, substrings[i+1].indexOf("\"}"));
+			if (toRemove.indexOf("replacements") > 0) {
+				String[] substrings = toRemove.substring(toRemove.indexOf("replacements")+15, toRemove.indexOf("offset")-3).split(",");
+				ArrayList<String> words = new ArrayList<String>();
 
-							words.add(toAdd);
-							i++;
-						}
+
+				for (int i = 0; i < substrings.length; i++) {
+					if (substrings[i].indexOf("}") > 0){
+						words.add(substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf("\"}")));
+					} else {
+						substrings[i] = substrings[i] + ">";
+						String toAdd = substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf(">")-1) + " "  + substrings[i+1].substring(substrings[i+1].indexOf(":\"")+2, substrings[i+1].indexOf("\"}"));
+						words.add(toAdd);
+						i++;
 					}
-					System.out.println();
-					for (String w : words) {
-						System.out.println(w);
-					}
+				}
+				System.out.println();
+				for (String w : words) {
+					System.out.println(w);
 				}
 			}
 			else{
 				System.out.println("\nNo Error!");
 			}
-
+			toRemove = toRemove.substring(0, toRemove.length() - 1);
+			toRemove = toRemove + "}}}";
 			tempResponse = tempResponse.replace(toRemove, "");
 
 		}
 	}
+
     }
 }
