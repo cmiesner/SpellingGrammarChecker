@@ -20,6 +20,8 @@ public class SpellingGrammarChecker extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
+	private JTextArea textArea;
+	private JTextArea output;
 //    private JScrollPane scrollPane;
 
     /**
@@ -45,16 +47,24 @@ public class SpellingGrammarChecker extends JFrame {
         setBounds(100, 100, 838, 608);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JTextArea textArea = new JTextArea();
+		JLabel lblEnterText = new JLabel("Enter Text:");
+		lblEnterText.setHorizontalAlignment(SwingConstants.CENTER);
+
+        textArea = new JTextArea();
         textArea.setRows(15);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
 
+		JLabel lblOutput = new JLabel("Output:");
+		lblOutput.setHorizontalAlignment(SwingConstants.CENTER);
+
+		output = new JTextArea();
+		output.setRows(15);
+		output.setWrapStyleWord(true);
+		output.setLineWrap(true);
+
         //not currently being used
 //        scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        JLabel lblEnterText = new JLabel("Enter Text:");
-        lblEnterText.setHorizontalAlignment(SwingConstants.CENTER);
 
         textField = new JTextField("File Location");
         textField.setColumns(10);
@@ -93,7 +103,7 @@ public class SpellingGrammarChecker extends JFrame {
 
 				int returnVal = fc.showOpenDialog(SpellingGrammarChecker.this);
 				
-				//Verify that the progam is allowed to open the file chooser
+				//Verify that the program is allowed to open the file chooser
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					String filePath = file.getAbsolutePath();
@@ -129,6 +139,10 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addGap(378)
                                 .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(392))
+						.addGroup(groupLayout.createSequentialGroup()
+								.addGap(378)
+								.addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addGap(392))
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                                         .addGroup(groupLayout.createSequentialGroup()
@@ -138,6 +152,8 @@ public class SpellingGrammarChecker extends JFrame {
                                                 .addGap(116)
                                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                                                         .addComponent(textArea)
+														.addGap(30)
+														.addComponent(output)
                                                         .addGroup(groupLayout.createSequentialGroup()
                                                                 .addComponent(textField, GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                                                                 .addGap(18)
@@ -157,9 +173,13 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addComponent(lblEnterText)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(textArea)
+								.addGap(30)
+								.addComponent(btnSubmit)
+								.addGap(36)
+								.addComponent(lblOutput)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(output)
                                 .addGap(18)
-                                .addComponent(btnSubmit)
-                                .addGap(36)
                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                                         .addComponent(btnSelectFile)
                                         .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -251,6 +271,7 @@ public class SpellingGrammarChecker extends JFrame {
 				System.out.println();
 				for (String w : words) {
 					System.out.println(w);
+					output.append(w + "\n");
 				}
 			}
 			else{
