@@ -43,7 +43,7 @@ public class SpellingGrammarChecker extends JFrame {
      * Create the frame.
      */
     public SpellingGrammarChecker() {
-        setBounds(100, 100, 850, 700);
+        setBounds(100, 100, 850, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel lblEnterText = new JLabel("Enter Text:");
@@ -127,15 +127,15 @@ public class SpellingGrammarChecker extends JFrame {
                 groupLayout.createParallelGroup(Alignment.TRAILING)
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(378)
-                                .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
                                 .addGap(392))
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(264)
-                                .addComponent(lblSimpleSpellingAnd, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblSimpleSpellingAnd, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                                 .addGap(273))
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(184)
-                                .addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                                .addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
                                 .addGap(203))
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
@@ -144,15 +144,15 @@ public class SpellingGrammarChecker extends JFrame {
                                                 .addComponent(btnSubmit))
                                         .addGroup(groupLayout.createSequentialGroup()
                                                 .addGap(116)
-                                                .addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
+                                                .addComponent(scrollPane_1))
                                         .addGroup(groupLayout.createSequentialGroup()
                                                 .addGap(116)
                                                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                        .addGroup(groupLayout.createSequentialGroup()
-                                                                .addComponent(textField, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+                                                                .addComponent(textField, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+                                                                .addPreferredGap(ComponentPlacement.UNRELATED)
                                                                 .addComponent(btnSelectFile))
-                                                        .addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))))
+                                                        .addComponent(scrollPane_2))))
                                 .addGap(146))
         );
         groupLayout.setVerticalGroup(
@@ -163,13 +163,13 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addGap(18)
                                 .addComponent(lblEnterText)
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 169, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addGap(12)
                                 .addComponent(btnSubmit)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(lblOutput)
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 169, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addGap(50)
                                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                                         .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
