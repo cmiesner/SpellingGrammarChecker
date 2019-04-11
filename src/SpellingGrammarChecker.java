@@ -21,7 +21,8 @@ public class SpellingGrammarChecker extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JTextArea textArea;
-    private JTextArea output;
+    private JLabel output;
+    private JLabel givenText;
 
     /**
      * Launch the application.
@@ -183,11 +184,11 @@ public class SpellingGrammarChecker extends JFrame {
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
 
-        output = new JTextArea();
+        output = new JLabel();
         scrollPane_2.setViewportView(output);
-        output.setRows(15);
-        output.setWrapStyleWord(true);
-        output.setLineWrap(true);
+
+        givenText = new JLabel();
+        scrollPane_2.setColumnHeaderView(givenText);
 
         getContentPane().setLayout(groupLayout);
 
@@ -273,10 +274,20 @@ public class SpellingGrammarChecker extends JFrame {
                         }
                     }
                     System.out.println();
+
+                    //prints all text from the textArea in the givenText JLabel.
+                    String inputText = textArea.getText();
+                    givenText.setText("<html><span bgcolor=\"red\">" + inputText + "</span></html>");
+
+
+                    String txt = "<html>";
                     for (String w : words) {
                         System.out.println(w);
-                        output.append(w + "\n");
+                        txt += output.getText() + "<br />" + w;
                     }
+                    txt += "</html>";
+                    //suggested corrections are displayed in the output JLabel
+                    output.setText(txt);
                 }
                 else{
                     System.out.println("\nNo Error!");
