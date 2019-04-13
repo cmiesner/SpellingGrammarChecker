@@ -308,7 +308,6 @@ public class SpellingGrammarChecker extends JFrame {
                             i++;
                         }
                     }
-                    System.out.println();
 
                     //Added by Davis
                     //Get the user selected value from the popup
@@ -320,9 +319,21 @@ public class SpellingGrammarChecker extends JFrame {
                         }
                     };
 
+                    //added by Cole
                     //prints all text from the textArea in the givenText JLabel.
+                    String offset = "";
+                    String length = "";
+                    if(toRemove.contains("context"))
+                    {
+                        offset = toRemove.substring(toRemove.indexOf("offset")+8, toRemove.indexOf("offset") + 13).replaceAll("([, A-Za-z\"])", "");
+                        length = toRemove.substring(toRemove.indexOf("length")+8, toRemove.indexOf("length") + 13).replaceAll("([, A-Za-z\"])", "");
+                        System.out.println("offset:" + offset);
+                        System.out.println("length:" + length);
+                    }
                     String inputText = textArea.getText();
-                    output.setText("<html><span color=\"red\"><U>" + inputText + "</U></span></html>");
+                    String correctText = inputText.substring(0, Integer.parseInt(offset));
+                    String correctTextLast = inputText.substring(Integer.parseInt(offset) + Integer.parseInt(length), inputText.length());
+                    output.setText("<html><span>" + correctText + "</span><span color=\"red\"><U>" + inputText.substring(Integer.parseInt(offset), Integer.parseInt(offset) + Integer.parseInt(length)) + "</U></span><span>" + correctTextLast + "</html>");
 //                    output.setText(inputText);
 
                     for (String w : words) {
