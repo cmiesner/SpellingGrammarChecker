@@ -1,9 +1,8 @@
-import java.awt.EventQueue;
+import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Font;
 import java.awt.event.*;
 
 //Spencer Added
@@ -11,18 +10,19 @@ import java.text.BreakIterator;
 import java.io.*;
 import java.net.*;
 import javax.net.ssl.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.util.Locale;
 import java.util.ArrayList;
 
 public class SpellingGrammarChecker extends JFrame {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JTextArea textArea;
     private JLabel output;
-    private JLabel givenText;
+    private JPopupMenu popup;
 
     /**
      * Launch the application.
@@ -187,11 +187,46 @@ public class SpellingGrammarChecker extends JFrame {
         output = new JLabel();
         scrollPane_2.setViewportView(output);
 
-        givenText = new JLabel();
-        scrollPane_2.setColumnHeaderView(givenText);
+        popup = new JPopupMenu();
+        addPopup(output, popup);
 
         getContentPane().setLayout(groupLayout);
+    }
 
+    // An inner class to check whether mouse events are the popup trigger
+    class MousePopupListener extends MouseAdapter {
+        public void mousePressed(MouseEvent e) {
+            checkPopup(e);
+        }
+
+        public void mouseClicked(MouseEvent e) {
+            checkPopup(e);
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            checkPopup(e);
+        }
+
+        private void checkPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                popup.show(SpellingGrammarChecker.this, e.getX(), e.getY());
+            }
+        }
+    }
+
+    // An inner class to show when popup events occur
+    class PopupPrintListener implements PopupMenuListener {
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+//            System.out.println("Popup menu will be visible!");
+        }
+
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+//            System.out.println("Popup menu will be invisible!");
+        }
+
+        public void popupMenuCanceled(PopupMenuEvent e) {
+//            System.out.println("Popup menu is hidden!");
+        }
     }
 
     //Spencer Added
@@ -275,19 +310,36 @@ public class SpellingGrammarChecker extends JFrame {
                     }
                     System.out.println();
 
+                    //Added by Davis
+                    //Get the user selected value from the popup
+                    ActionListener menuListener = new ActionListener() {
+                        public void actionPerformed(ActionEvent event) {
+                            System.out.println("Popup menu item ["
+                                    + event.getActionCommand() + "] was pressed.");
+                            output.setText(event.getActionCommand());
+                        }
+                    };
+
                     //prints all text from the textArea in the givenText JLabel.
                     String inputText = textArea.getText();
-                    givenText.setText("<html><span bgcolor=\"red\">" + inputText + "</span></html>");
+                    output.setText("<html><span color=\"red\"><U>" + inputText + "</U></span></html>");
+//                    output.setText(inputText);
 
-
-                    String txt = "<html>";
                     for (String w : words) {
+                        JMenuItem item;
                         System.out.println(w);
-                        txt += output.getText() + "<br />" + w;
+                        //suggested corrections are displayed in the popup menu
+                        popup.add(item = new JMenuItem(w));
+                        item.setHorizontalTextPosition(JMenuItem.RIGHT);
+                        item.addActionListener(menuListener);
                     }
-                    txt += "</html>";
-                    //suggested corrections are displayed in the output JLabel
-                    output.setText(txt);
+
+                    popup.setLabel("Justification");
+                    popup.setBorder(new BevelBorder(BevelBorder.RAISED));
+                    popup.addPopupMenuListener(new PopupPrintListener());
+
+                    addMouseListener(new MousePopupListener());
+
                 }
                 else{
                     System.out.println("\nNo Error!");
@@ -299,5 +351,23 @@ public class SpellingGrammarChecker extends JFrame {
             }
         }
 
+    }
+    //Added by Davis
+    private static void addPopup(Component component, final JPopupMenu popup) {
+        component.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+            private void showMenu(MouseEvent e) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
     }
 }
