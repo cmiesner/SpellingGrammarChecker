@@ -309,16 +309,6 @@ public class SpellingGrammarChecker extends JFrame {
                         }
                     }
 
-                    //Added by Davis
-                    //Get the user selected value from the popup
-                    ActionListener menuListener = new ActionListener() {
-                        public void actionPerformed(ActionEvent event) {
-                            System.out.println("Popup menu item ["
-                                    + event.getActionCommand() + "] was pressed.");
-                            output.setText(event.getActionCommand());
-                        }
-                    };
-
                     //added by Cole
                     //prints all text from the textArea in the givenText JLabel.
                     String offset = "";
@@ -333,9 +323,28 @@ public class SpellingGrammarChecker extends JFrame {
                     String inputText = textArea.getText();
                     String correctText = inputText.substring(0, Integer.parseInt(offset));
                     String correctTextLast = inputText.substring(Integer.parseInt(offset) + Integer.parseInt(length), inputText.length());
-                    output.setText("<html><span>" + correctText + "</span><span color=\"red\"><U>" + inputText.substring(Integer.parseInt(offset), Integer.parseInt(offset) + Integer.parseInt(length)) + "</U></span><span>" + correctTextLast + "</html>");
+                    output.setText("<html><body style='width: 450px'><span>" + correctText + "</span><span color=\"red\"><U>"
+                            + inputText.substring(Integer.parseInt(offset), Integer.parseInt(offset) + Integer.parseInt(length))
+                            + "</U></span><span>" + correctTextLast + "</body></html>");
 //                    output.setText(inputText);
 
+                    //cut or split function - find a word and replace
+
+                    //Added by Davis
+                    //Get the user selected value from the popup
+                    ActionListener menuListener = new ActionListener() {
+                        public void actionPerformed(ActionEvent event) {
+                            System.out.println("Popup menu item ["
+                                    + event.getActionCommand() + "] was pressed.");
+//                            output.setText(event.getActionCommand());
+                            //Replace error with correction
+                            output.setText("<html><body style='width: 450px'>" + correctText
+                                    + event.getActionCommand()
+                                    + correctTextLast + "</body></html>");
+                        }
+                    };
+
+                    //Added by Davis
                     for (String w : words) {
                         JMenuItem item;
                         System.out.println(w);
