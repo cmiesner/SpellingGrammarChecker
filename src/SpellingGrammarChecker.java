@@ -185,6 +185,8 @@ public class SpellingGrammarChecker extends JFrame {
         textArea.setLineWrap(true);
 
         output = new JLabel();
+        output.setHorizontalAlignment(SwingConstants.LEFT);
+        output.setVerticalAlignment(SwingConstants.TOP);
         scrollPane_2.setViewportView(output);
 
         popup = new JPopupMenu();
@@ -193,6 +195,7 @@ public class SpellingGrammarChecker extends JFrame {
         getContentPane().setLayout(groupLayout);
     }
 
+    //Davis Added
     // An inner class to check whether mouse events are the popup trigger
     class MousePopupListener extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
@@ -310,7 +313,7 @@ public class SpellingGrammarChecker extends JFrame {
                     }
 
                     //added by Cole
-                    //prints all text from the textArea in the givenText JLabel.
+                    //prints all text from the textArea in the output JLabel.
                     String offset = "";
                     String length = "";
                     if(toRemove.contains("context"))
@@ -336,7 +339,7 @@ public class SpellingGrammarChecker extends JFrame {
                         public void actionPerformed(ActionEvent event) {
                             System.out.println("Popup menu item ["
                                     + event.getActionCommand() + "] was pressed.");
-//                            output.setText(event.getActionCommand());
+
                             //Replace error with correction
                             output.setText("<html><body style='width: 450px'>" + correctText
                                     + event.getActionCommand()
