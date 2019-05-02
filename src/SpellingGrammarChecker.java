@@ -21,7 +21,7 @@ public class SpellingGrammarChecker extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private JTextArea textArea;
-    private JLabel output;
+    private JTextPane output;
     private JPopupMenu popup;
 
     /**
@@ -184,9 +184,8 @@ public class SpellingGrammarChecker extends JFrame {
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
 
-        output = new JLabel();
-        output.setHorizontalAlignment(SwingConstants.LEFT);
-        output.setVerticalAlignment(SwingConstants.TOP);
+        output = new JTextPane();
+        output.setContentType("text/html");
         scrollPane_2.setViewportView(output);
 
         popup = new JPopupMenu();
