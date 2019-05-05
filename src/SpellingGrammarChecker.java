@@ -3,8 +3,6 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 
 //Spencer Added
@@ -15,7 +13,6 @@ import javax.net.ssl.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.text.BadLocationException;
 import java.util.Locale;
 import java.util.ArrayList;
 
@@ -47,13 +44,7 @@ public class SpellingGrammarChecker extends JFrame {
      * Create the frame.
      */
     public SpellingGrammarChecker() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        getContentPane().setBackground(new java.awt.Color(96, 146, 187));
-        setBounds(100, 100, 850, 850);
+        setBounds(100, 100, 850, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel lblEnterText = new JLabel("Enter Text:");
@@ -103,7 +94,6 @@ public class SpellingGrammarChecker extends JFrame {
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
                             String filePath = file.getAbsolutePath();
-                            textField.setText(filePath);
 
                             //Read the selected file and parse out each sentence
                             try {
@@ -129,56 +119,41 @@ public class SpellingGrammarChecker extends JFrame {
                 }
         );
 
-        //Davis Added
         JScrollPane scrollPane_1 = new JScrollPane();
 
         JScrollPane scrollPane_2 = new JScrollPane();
 
-        Clipboard clip = getToolkit().getSystemClipboard();
-        JButton btnCopyText = new JButton("Copy Text");
-
-        //Copies text from Output box
-        btnCopyText.addActionListener(
-                new ActionListener(){
-                    public void actionPerformed(ActionEvent e) {
-                        String s = "";
-                        try {
-                            s = output.getDocument().getText(1, output.getDocument().getLength());
-                        } catch (BadLocationException exc){
-                            exc.printStackTrace();
-                        }
-                        StringSelection clipString = new StringSelection(s);
-                        clip.setContents(clipString, clipString);
-                    }
-                }
-        );
-
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setHorizontalGroup(
-                groupLayout.createParallelGroup(Alignment.LEADING)
+                groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addGroup(groupLayout.createSequentialGroup()
+                                .addGap(378)
+                                .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                                .addGap(392))
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(264)
                                 .addComponent(lblSimpleSpellingAnd, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                                 .addGap(273))
-                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+                        .addGroup(groupLayout.createSequentialGroup()
+                                .addGap(184)
+                                .addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                                .addGap(203))
+                        .addGroup(groupLayout.createSequentialGroup()
                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                                         .addGroup(groupLayout.createSequentialGroup()
                                                 .addContainerGap()
-                                                .addComponent(btnCopyText, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+                                                .addComponent(btnSubmit))
+                                        .addGroup(groupLayout.createSequentialGroup()
+                                                .addGap(116)
+                                                .addComponent(scrollPane_1))
+                                        .addGroup(groupLayout.createSequentialGroup()
                                                 .addGap(116)
                                                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                        .addComponent(lblEnterText, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addComponent(lblOutput, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-                                                                .addPreferredGap(ComponentPlacement.RELATED)
-                                                                .addComponent(btnSubmit))
                                                         .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                                                                 .addComponent(textField, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                                                                 .addPreferredGap(ComponentPlacement.UNRELATED)
                                                                 .addComponent(btnSelectFile))
-                                                        .addComponent(scrollPane_2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addComponent(scrollPane_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))))
+                                                        .addComponent(scrollPane_2))))
                                 .addGap(146))
         );
         groupLayout.setVerticalGroup(
@@ -188,28 +163,26 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addComponent(lblSimpleSpellingAnd, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
                                 .addGap(18)
                                 .addComponent(lblEnterText)
-                                .addGap(12)
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
                                 .addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addGap(12)
                                 .addComponent(btnSubmit)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(lblOutput)
-                                .addGap(12)
-                                .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(btnCopyText)
-                                .addGap(45)
+                                .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                                .addGap(50)
                                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                        .addComponent(btnSelectFile)
-                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                .addGap(43))
+                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnSelectFile))
+                                .addGap(362))
         );
 
         textArea = new JTextArea();
+        scrollPane_1.setViewportView(textArea);
         textArea.setRows(15);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
-        scrollPane_1.setViewportView(textArea);
 
         output = new JTextPane();
         output.setContentType("text/html");
@@ -264,9 +237,9 @@ public class SpellingGrammarChecker extends JFrame {
         System.out.println("---------------------------------------------------");
 
         //Sets up the connection and makes the POST
-        String url = "http://api.grammarbot.io/v2/check?api_key=9JMF2Y56";
+        String url = "http://api.grammarbot.io/v2/check?api_key=XYZ";
         String toCheckUrl = toCheck.replaceAll(" ","%20");
-        String urlParameters = "?&text=" + toCheckUrl + "&language=en-US";
+        String urlParameters = "&text=" + toCheckUrl + "&language=en-US";
 
 
         URL con = new URL(url + urlParameters);
@@ -308,8 +281,11 @@ public class SpellingGrammarChecker extends JFrame {
 
         }
 
+        int [] underline = new int[100];
+        for (int i= 0; i<100; i++) {underline[i]=0;}
         String tempResponse = response.toString();
-
+        int underlineX = 0;
+        ArrayList<String> words = new ArrayList<String>();
         //Added by Monis
         //Edited by Spencer
         //parse out the possible fixes for each mistake found.
@@ -324,9 +300,7 @@ public class SpellingGrammarChecker extends JFrame {
 
                 if (toRemove.indexOf("replacements") > 0) {
                     String[] substrings = toRemove.substring(toRemove.indexOf("replacements")+15, toRemove.indexOf("offset")-3).split(",");
-                    ArrayList<String> words = new ArrayList<String>();
-
-
+                    
                     for (int i = 0; i < substrings.length; i++) {
                         if (substrings[i].indexOf("}") > 0){
                             words.add(substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf("\"}")));
@@ -338,7 +312,7 @@ public class SpellingGrammarChecker extends JFrame {
                         }
                     }
 
-                    //added by Cole
+                	//added by Cole
                     //prints all text from the textArea in the output JLabel.
                     String offset = "";
                     String length = "";
@@ -348,44 +322,11 @@ public class SpellingGrammarChecker extends JFrame {
                         length = toRemove.substring(toRemove.indexOf("length")+8, toRemove.indexOf("length") + 13).replaceAll("([, A-Za-z\"])", "");
                         System.out.println("offset:" + offset);
                         System.out.println("length:" + length);
+                        
+                        underline[underlineX] = Integer.parseInt(offset);
+                        underline[underlineX+1] = Integer.parseInt(length);
+                        underlineX+=2;
                     }
-                    String inputText = textArea.getText();
-                    String correctText = inputText.substring(0, Integer.parseInt(offset));
-                    String correctTextLast = inputText.substring(Integer.parseInt(offset) + Integer.parseInt(length), inputText.length());
-                    output.setText("<html><body style='width: 450px'><span>" + correctText + "</span><span color=\"red\"><U>"
-                            + inputText.substring(Integer.parseInt(offset), Integer.parseInt(offset) + Integer.parseInt(length))
-                            + "</U></span><span>" + correctTextLast + "</body></html>");
-
-                    //Added by Davis
-                    //Get the user selected value from the popup
-                    ActionListener menuListener = new ActionListener() {
-                        public void actionPerformed(ActionEvent event) {
-                            System.out.println("Popup menu item ["
-                                    + event.getActionCommand() + "] was pressed.");
-
-                            //Replace error with correction
-                            output.setText("<html><body style='width: 450px'>" + correctText
-                                    + event.getActionCommand()
-                                    + correctTextLast + "</body></html>");
-                        }
-                    };
-
-                    //Added by Davis
-                    for (String w : words) {
-                        JMenuItem item;
-                        System.out.println(w);
-                        //suggested corrections are displayed in the popup menu
-                        popup.add(item = new JMenuItem(w));
-                        item.setHorizontalTextPosition(JMenuItem.RIGHT);
-                        item.addActionListener(menuListener);
-                    }
-
-                    popup.setLabel("Justification");
-                    popup.setBorder(new BevelBorder(BevelBorder.RAISED));
-                    popup.addPopupMenuListener(new PopupPrintListener());
-
-                    addMouseListener(new MousePopupListener());
-
                 }
                 else{
                     System.out.println("\nNo Error!");
@@ -396,7 +337,56 @@ public class SpellingGrammarChecker extends JFrame {
 
             }
         }
+        
+        //Added by Monis
+        
+        //tried underlining all wrong words/grammar. It recognizes all wrong grammar but will
+        //underline only the last wrong word.
+        
+        String correctText = "";
+        String correctTextLast = "";
+        for (int x=0; x<messageCount*2; x+=2) {
+        	
+            String inputText = textArea.getText();
+            correctText = inputText.substring(0, underline[x]);
+            correctTextLast = inputText.substring(underline[x] + underline[x+1], inputText.length());
+            output.setText("<html><body style='width: 450px'><span>" + correctText + "</span><span color=\"red\"><U>"
+                    + inputText.substring(underline[x] , underline[x] + underline[x+1])
+                    + "</U></span><span>" + correctTextLast + "</body></html>");
+        }
+        final String correctTextNew = correctText;
+        final String correctTextLastNew = correctTextLast;
+        for (int x = 0; x < messageCount; x++){
+            //Added by Davis
+            //Get the user selected value from the popup
+            ActionListener menuListener = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    System.out.println("Popup menu item ["
+                            + event.getActionCommand() + "] was pressed.");
 
+                    //Replace error with correction
+                    output.setText("<html><body style='width: 450px'>" + correctTextNew
+                            + event.getActionCommand()
+                            + correctTextLastNew + "</body></html>");
+                }
+            };
+
+            //Added by Davis
+            for (String w : words) {
+                JMenuItem item;
+                System.out.println(w);
+                //suggested corrections are displayed in the popup menu
+                popup.add(item = new JMenuItem(w));
+                item.setHorizontalTextPosition(JMenuItem.RIGHT);
+                item.addActionListener(menuListener);
+            }
+
+            popup.setLabel("Justification");
+            popup.setBorder(new BevelBorder(BevelBorder.RAISED));
+            popup.addPopupMenuListener(new PopupPrintListener());
+
+            addMouseListener(new MousePopupListener());
+        }
     }
     //Added by Davis
     private static void addPopup(Component component, final JPopupMenu popup) {
