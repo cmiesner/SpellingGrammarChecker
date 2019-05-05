@@ -103,6 +103,7 @@ public class SpellingGrammarChecker extends JFrame {
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
                             String filePath = file.getAbsolutePath();
+                            textField.setText(filePath);
 
                             //Read the selected file and parse out each sentence
                             try {
@@ -136,6 +137,7 @@ public class SpellingGrammarChecker extends JFrame {
         Clipboard clip = getToolkit().getSystemClipboard();
         JButton btnCopyText = new JButton("Copy Text");
 
+        //Copies text from Output box
         btnCopyText.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
@@ -353,9 +355,6 @@ public class SpellingGrammarChecker extends JFrame {
                     output.setText("<html><body style='width: 450px'><span>" + correctText + "</span><span color=\"red\"><U>"
                             + inputText.substring(Integer.parseInt(offset), Integer.parseInt(offset) + Integer.parseInt(length))
                             + "</U></span><span>" + correctTextLast + "</body></html>");
-//                    output.setText(inputText);
-
-                    //cut or split function - find a word and replace
 
                     //Added by Davis
                     //Get the user selected value from the popup
