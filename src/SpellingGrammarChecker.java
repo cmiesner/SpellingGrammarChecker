@@ -3,6 +3,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 
 //Spencer Added
@@ -13,6 +15,7 @@ import javax.net.ssl.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.text.BadLocationException;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.*;
@@ -45,7 +48,13 @@ public class SpellingGrammarChecker extends JFrame {
      * Create the frame.
      */
     public SpellingGrammarChecker() {
-        setBounds(100, 100, 850, 800);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        getContentPane().setBackground(new java.awt.Color(96, 146, 187));
+        setBounds(100, 100, 850, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel lblEnterText = new JLabel("Enter Text:");
@@ -95,6 +104,7 @@ public class SpellingGrammarChecker extends JFrame {
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
                             String filePath = file.getAbsolutePath();
+                            textField.setText(filePath);
 
                             //Read the selected file and parse out each sentence
                             try {
@@ -122,41 +132,56 @@ public class SpellingGrammarChecker extends JFrame {
                 }
         );
 
+        //Davis Added
         JScrollPane scrollPane_1 = new JScrollPane();
 
         JScrollPane scrollPane_2 = new JScrollPane();
 
+        Clipboard clip = getToolkit().getSystemClipboard();
+        JButton btnCopyText = new JButton("Copy Text");
+
+        //Copies text from Output box
+        btnCopyText.addActionListener(
+                new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        String s = "";
+                        try {
+                            s = output.getDocument().getText(1, output.getDocument().getLength());
+                        } catch (BadLocationException exc){
+                            exc.printStackTrace();
+                        }
+                        StringSelection clipString = new StringSelection(s);
+                        clip.setContents(clipString, clipString);
+                    }
+                }
+        );
+
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setHorizontalGroup(
-                groupLayout.createParallelGroup(Alignment.TRAILING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addGap(378)
-                                .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                .addGap(392))
+                groupLayout.createParallelGroup(Alignment.LEADING)
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(264)
                                 .addComponent(lblSimpleSpellingAnd, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                                 .addGap(273))
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addGap(184)
-                                .addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
-                                .addGap(203))
-                        .addGroup(groupLayout.createSequentialGroup()
+                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                                 .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
                                         .addGroup(groupLayout.createSequentialGroup()
                                                 .addContainerGap()
-                                                .addComponent(btnSubmit))
-                                        .addGroup(groupLayout.createSequentialGroup()
-                                                .addGap(116)
-                                                .addComponent(scrollPane_1))
-                                        .addGroup(groupLayout.createSequentialGroup()
+                                                .addComponent(btnCopyText, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
                                                 .addGap(116)
                                                 .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                                        .addComponent(lblEnterText, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addComponent(lblOutput, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+                                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                                .addComponent(btnSubmit))
                                                         .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
                                                                 .addComponent(textField, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                                                                 .addPreferredGap(ComponentPlacement.UNRELATED)
                                                                 .addComponent(btnSelectFile))
-                                                        .addComponent(scrollPane_2))))
+                                                        .addComponent(scrollPane_2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addComponent(scrollPane_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))))
                                 .addGap(146))
         );
         groupLayout.setVerticalGroup(
@@ -166,26 +191,28 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addComponent(lblSimpleSpellingAnd, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
                                 .addGap(18)
                                 .addComponent(lblEnterText)
-                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addGap(12)
                                 .addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addGap(12)
                                 .addComponent(btnSubmit)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(lblOutput)
-                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addGap(12)
                                 .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
-                                .addGap(50)
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addComponent(btnCopyText)
+                                .addGap(45)
                                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnSelectFile))
-                                .addGap(362))
+                                        .addComponent(btnSelectFile)
+                                        .addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGap(43))
         );
 
         textArea = new JTextArea();
-        scrollPane_1.setViewportView(textArea);
         textArea.setRows(15);
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
+        scrollPane_1.setViewportView(textArea);
 
         output = new JTextPane();
         output.setContentType("text/html");
