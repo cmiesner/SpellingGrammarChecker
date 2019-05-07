@@ -165,11 +165,13 @@ public class App extends JFrame
 						System.out.println(completeString);
 						completeString = completeString.replaceAll("\\t", " ");
 						textArea.setText(completeString);
+						
 					}
+					document.close();
 				    } catch (Exception err){
 					System.out.println(err);
 				    }
-			    } else if (filePath.indexOf(".docx") > -1) {
+			    } else if (filePath.indexOf(".docx") > -1 || filePath.indexOf(".doc") > -1) {
 				   try {
 						XWPFDocument docx = new XWPFDocument(new FileInputStream(filePath));
 						
@@ -181,7 +183,7 @@ public class App extends JFrame
 						collectedText = collectedText.replaceAll("\\t", " ");
 						collectedText = collectedText.replaceAll("\\s{2,}", " ");
 						textArea.setText(collectedText);
-
+						docx.close();
 				   } catch (Exception err) {
 					System.out.println(err);
 				   }	
@@ -241,14 +243,6 @@ public class App extends JFrame
         btnWriteToFile.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
-                        //TODO
-                        //Get contents from the output box
-                                //need to parse out of html
-                        //write those contents to a new file that
-                        //file example (OGfilePath)Revised.txt
-                        //or just the first few words in the output
-                        //Will always use .txt
-
 
                         String toFile = output.getText();
                         String textFieldContents = textField.getText();
