@@ -120,9 +120,9 @@ public class SpellingGrammarChecker extends JFrame {
 
                                 String fileAsString = buffer.toString();
                                 fileAsString = fileAsString.replaceAll("\\n", " ");
-				fileAsString = fileAsString.replaceAll("\\t", " ");
+                                fileAsString = fileAsString.replaceAll("\\t", " ");
                                 System.out.println(fileAsString);
-				textArea.setText(fileAsString);
+                                textArea.setText(fileAsString);
 
                                 makeConnection(fileAsString);
                             } catch (Exception exc) {
@@ -158,32 +158,44 @@ public class SpellingGrammarChecker extends JFrame {
                 }
         );
 
+        JButton btnWriteToFile = new JButton("Write to File");
+
+        btnWriteToFile.addActionListener(
+                new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        //TODO add functionality
+                    }
+                }
+        );
+
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setHorizontalGroup(
-                groupLayout.createParallelGroup(Alignment.LEADING)
+                groupLayout.createParallelGroup(Alignment.TRAILING)
                         .addGroup(groupLayout.createSequentialGroup()
                                 .addGap(264)
                                 .addComponent(lblSimpleSpellingAnd, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                                 .addGap(273))
-                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-                                .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                        .addGroup(groupLayout.createSequentialGroup()
+                                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                                         .addGroup(groupLayout.createSequentialGroup()
-                                                .addContainerGap()
+                                                .addGap(500)
+                                                .addComponent(btnWriteToFile, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
                                                 .addComponent(btnCopyText, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+                                        .addGroup(groupLayout.createSequentialGroup()
                                                 .addGap(116)
-                                                .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                                        .addComponent(lblEnterText, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addComponent(lblOutput, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+                                                .addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                                                        .addComponent(lblEnterText, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addGroup(groupLayout.createSequentialGroup()
                                                                 .addPreferredGap(ComponentPlacement.RELATED)
                                                                 .addComponent(btnSubmit))
-                                                        .addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+                                                        .addGroup(groupLayout.createSequentialGroup()
                                                                 .addComponent(textField, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
                                                                 .addPreferredGap(ComponentPlacement.UNRELATED)
                                                                 .addComponent(btnSelectFile))
-                                                        .addComponent(scrollPane_2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                                                        .addComponent(scrollPane_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))))
+                                                        .addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                                                        .addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))))
                                 .addGap(146))
         );
         groupLayout.setVerticalGroup(
@@ -202,7 +214,9 @@ public class SpellingGrammarChecker extends JFrame {
                                 .addGap(12)
                                 .addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(btnCopyText)
+                                .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(btnCopyText)
+                                        .addComponent(btnWriteToFile))
                                 .addGap(45)
                                 .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
                                         .addComponent(btnSelectFile)
@@ -298,7 +312,7 @@ public class SpellingGrammarChecker extends JFrame {
         String tempResponse = response.toString();
         int underlineX = 0;
         ArrayList<String> words = new ArrayList<String>();
-	Map<String, String> offsetLengthMap = new HashMap<String, String>();
+        Map<String, String> offsetLengthMap = new HashMap<String, String>();
         //Added by Monis
         //Edited by Spencer
         //parse out the possible fixes for each mistake found.
@@ -336,7 +350,7 @@ public class SpellingGrammarChecker extends JFrame {
 			}
 			System.out.println("Total count: " + count); 
 */
-		    //added by Cole
+                    //added by Cole
                     //prints all text from the textArea in the output JLabel.
                     String offset = "";
                     String length = "";
@@ -347,7 +361,7 @@ public class SpellingGrammarChecker extends JFrame {
                         System.out.println("offset:" + offset);
                         System.out.println("length:" + length);
 
-			offsetLengthMap.put(offset, length);
+                        offsetLengthMap.put(offset, length);
 
                         underline[underlineX] = Integer.parseInt(offset);
                         underline[underlineX+1] = Integer.parseInt(length);
@@ -360,53 +374,53 @@ public class SpellingGrammarChecker extends JFrame {
                 toRemove = toRemove.substring(0, toRemove.length() - 1);
                 toRemove = toRemove + "}}}";
                 tempResponse = tempResponse.replace(toRemove, "");
-		System.out.println("toRemove: " +  toRemove);
+                System.out.println("toRemove: " +  toRemove);
             }
         }
 
 
-       	//Added by Spencer
-	//Add underlines to words that are incorrect
-	String inputText = textArea.getText();
-	String text = inputText;
-	for (Map.Entry entry : offsetLengthMap.entrySet()){
-		System.out.println("Key: " + entry.getKey());
-		System.out.println("Value: " + entry.getValue());
-		String offsetString = String.valueOf(entry.getKey());
-		String lengthString = String.valueOf(entry.getValue());
-		int offset = Integer.parseInt(offsetString);
-		int length = Integer.parseInt(lengthString);
+        //Added by Spencer
+        //Add underlines to words that are incorrect
+        String inputText = textArea.getText();
+        String text = inputText;
+        for (Map.Entry entry : offsetLengthMap.entrySet()){
+            System.out.println("Key: " + entry.getKey());
+            System.out.println("Value: " + entry.getValue());
+            String offsetString = String.valueOf(entry.getKey());
+            String lengthString = String.valueOf(entry.getValue());
+            int offset = Integer.parseInt(offsetString);
+            int length = Integer.parseInt(lengthString);
 
-		inputText = textArea.getText();
-		String toUnderline = inputText.substring(offset, length+offset);
-		System.out.println("To Underline: " + toUnderline);
+            inputText = textArea.getText();
+            String toUnderline = inputText.substring(offset, length+offset);
+            System.out.println("To Underline: " + toUnderline);
 
-		String underlineFormat = "<span color=\"red\"><U>" + toUnderline + "</U></span>";
+            String underlineFormat = "<span color=\"red\"><U>" + toUnderline + "</U></span>";
 
 //		System.out.println("Underline Format: " + underlineFormat + " To Underline: " + toUnderline);
 
-		text = text.replace(toUnderline, underlineFormat);
-	}
-	text = "<html><body style='width:450px'><span>" + text + "</body></html>";
+            text = text.replace(toUnderline, underlineFormat);
+        }
+        text = "<html><body style='width:450px'><span>" + text + "</body></html>";
 
-	String[] allWords = text.split(" ");
+        String[] allWords = text.split(" ");
 
-	    String correctText = "";
+        String correctText = "";
 
-	//Parses out the correct words from the string
-	for (String word : allWords){
-		if ((word.indexOf("<") == -1) && (word.indexOf(">") == -1 )){
-			correctText += word + " ";
-		}
-	}
+        //Parses out the correct words from the string
+        for (String word : allWords){
+            if ((word.indexOf("<") == -1) && (word.indexOf(">") == -1 )){
+                correctText += word + " ";
+            }
+        }
 
-	System.out.println("correctText: " + correctText);
-	output.setText(text);
+        System.out.println("correctText: " + correctText);
+        output.setText(text);
 
         String correctTextLast = "";
 
 
-	//Added by Monis
+        //Added by Monis
         for (int x=0; x<messageCount*2; x+=2) {
 
             inputText = textArea.getText();
@@ -470,10 +484,10 @@ public class SpellingGrammarChecker extends JFrame {
 
     //Added by Davis
     /*
-    * Possible way to get the position of specific words in the output
-    * See TextComponentWordAtCaretUtil.java file for an example (have to move it to src folder to run)
-    * I was having trouble implementing it with the popup menu we already have
-    * */
+     * Possible way to get the position of specific words in the output
+     * See TextComponentWordAtCaretUtil.java file for an example (have to move it to src folder to run)
+     * I was having trouble implementing it with the popup menu we already have
+     * */
 //    private static MouseListener createPopupListener(JTextComponent tc) {
 //        JPopupMenu popupMenu = new JPopupMenu();
 //        JMenuItem menu = popupMenu.add(new JMenuItem("Test"));
