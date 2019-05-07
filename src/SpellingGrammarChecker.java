@@ -15,6 +15,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.*;
 
 public class SpellingGrammarChecker extends JFrame {
 
@@ -286,6 +287,7 @@ public class SpellingGrammarChecker extends JFrame {
         String tempResponse = response.toString();
         int underlineX = 0;
         ArrayList<String> words = new ArrayList<String>();
+	Map<String, String> offsetLengthMap = new HashMap<String, String>();
         //Added by Monis
         //Edited by Spencer
         //parse out the possible fixes for each mistake found.
@@ -311,8 +313,19 @@ public class SpellingGrammarChecker extends JFrame {
                             i++;
                         }
                     }
-
-                	//added by Cole
+/*
+			System.out.println(tempResponse);
+			System.out.println(tempResponse.indexOf("Possible spelling mistake found"));
+			int count = 0;
+			int fromIndex = 0;
+			while ((fromIndex = tempResponse.indexOf("Possible spelling mistake found", fromIndex))!= -1){
+				System.out.println("Found at index: "+ fromIndex);
+				count++;
+				fromIndex++;
+			}
+			System.out.println("Total count: " + count); 
+*/
+		    //added by Cole
                     //prints all text from the textArea in the output JLabel.
                     String offset = "";
                     String length = "";
@@ -323,6 +336,8 @@ public class SpellingGrammarChecker extends JFrame {
                         System.out.println("offset:" + offset);
                         System.out.println("length:" + length);
                         
+			offsetLengthMap.put(offset, length);
+			
                         underline[underlineX] = Integer.parseInt(offset);
                         underline[underlineX+1] = Integer.parseInt(length);
                         underlineX+=2;
@@ -334,26 +349,61 @@ public class SpellingGrammarChecker extends JFrame {
                 toRemove = toRemove.substring(0, toRemove.length() - 1);
                 toRemove = toRemove + "}}}";
                 tempResponse = tempResponse.replace(toRemove, "");
-
+		System.out.println("toRemove: " +  toRemove);
             }
         }
-        
-        //Added by Monis
-        
-        //tried underlining all wrong words/grammar. It recognizes all wrong grammar but will
-        //underline only the last wrong word.
-        
+       
+ 
+       	//Added by Spencer
+	//Add underlines to words that are incorrect 
+	String inputText = textArea.getText();
+	String text = inputText;
+	for (Map.Entry entry : offsetLengthMap.entrySet()){
+		System.out.println("Key: " + entry.getKey());	
+		System.out.println("Value: " + entry.getValue());
+		String offsetString = String.valueOf(entry.getKey());
+		String lengthString = String.valueOf(entry.getValue());
+		int offset = Integer.parseInt(offsetString);
+		int length = Integer.parseInt(lengthString);
+
+		inputText = textArea.getText();
+		String toUnderline = inputText.substring(offset, length+offset);
+		System.out.println("To Underline: " + toUnderline);
+
+		String underlineFormat = "<span color=\"red\"><U>" + toUnderline + "</U></span>";
+
+//		System.out.println("Underline Format: " + underlineFormat + " To Underline: " + toUnderline);
+
+		text = text.replace(toUnderline, underlineFormat);
+	}
+	text = "<html><body style='width:450px'><span>" + text + "</body></html>";
+
+	String[] allWords = text.split(" ");
+
         String correctText = "";
+	
+	//Parses out the correct words from the string
+	for (String word : allWords){
+		if ((word.indexOf("<") == -1) && (word.indexOf(">") == -1 )){
+			correctText += word + " ";
+		} 
+	}
+
+	System.out.println("correctText: " + correctText);	
+	output.setText(text);
+
         String correctTextLast = "";
+
+
+	//Added by Monis
         for (int x=0; x<messageCount*2; x+=2) {
-        	
-            String inputText = textArea.getText();
-            correctText = inputText.substring(0, underline[x]);
+
+            inputText = textArea.getText();	    
             correctTextLast = inputText.substring(underline[x] + underline[x+1], inputText.length());
-            output.setText("<html><body style='width: 450px'><span>" + correctText + "</span><span color=\"red\"><U>"
-                    + inputText.substring(underline[x] , underline[x] + underline[x+1])
-                    + "</U></span><span>" + correctTextLast + "</body></html>");
+
         }
+
+ 
         final String correctTextNew = correctText;
         final String correctTextLastNew = correctTextLast;
         for (int x = 0; x < messageCount; x++){
@@ -363,6 +413,8 @@ public class SpellingGrammarChecker extends JFrame {
                 public void actionPerformed(ActionEvent event) {
                     System.out.println("Popup menu item ["
                             + event.getActionCommand() + "] was pressed.");
+		
+		    System.out.println(event.getActionCommand());
 
                     //Replace error with correction
                     output.setText("<html><body style='width: 450px'>" + correctTextNew
