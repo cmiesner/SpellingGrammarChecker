@@ -342,18 +342,6 @@ public class SpellingGrammarChecker extends JFrame {
                             i++;
                         }
                     }
-/*
-			System.out.println(tempResponse);
-			System.out.println(tempResponse.indexOf("Possible spelling mistake found"));
-			int count = 0;
-			int fromIndex = 0;
-			while ((fromIndex = tempResponse.indexOf("Possible spelling mistake found", fromIndex))!= -1){
-				System.out.println("Found at index: "+ fromIndex);
-				count++;
-				fromIndex++;
-			}
-			System.out.println("Total count: " + count); 
-*/
 		    //added by Cole
                     //prints all text from the textArea in the output JLabel.
                     String offset = "";
