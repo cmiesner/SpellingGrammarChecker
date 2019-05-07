@@ -16,6 +16,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Utilities;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.*;
@@ -219,33 +221,13 @@ public class SpellingGrammarChecker extends JFrame {
         scrollPane_2.setViewportView(output);
 
         popup = new JPopupMenu();
+//        output.addMouseListener(createPopupListener(output));
         addPopup(output, popup);
 
         getContentPane().setLayout(groupLayout);
     }
 
     //Davis Added
-    // An inner class to check whether mouse events are the popup trigger
-    class MousePopupListener extends MouseAdapter {
-        public void mousePressed(MouseEvent e) {
-            checkPopup(e);
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            checkPopup(e);
-        }
-
-        public void mouseReleased(MouseEvent e) {
-            checkPopup(e);
-        }
-
-        private void checkPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                popup.show(SpellingGrammarChecker.this, e.getX(), e.getY());
-            }
-        }
-    }
-
     // An inner class to show when popup events occur
     class PopupPrintListener implements PopupMenuListener {
         public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -331,7 +313,7 @@ public class SpellingGrammarChecker extends JFrame {
 
                 if (toRemove.indexOf("replacements") > 0) {
                     String[] substrings = toRemove.substring(toRemove.indexOf("replacements")+15, toRemove.indexOf("offset")-3).split(",");
-                    
+
                     for (int i = 0; i < substrings.length; i++) {
                         if (substrings[i].indexOf("}") > 0){
                             words.add(substrings[i].substring(substrings[i].indexOf(":\"")+2, substrings[i].indexOf("\"}")));
@@ -364,9 +346,9 @@ public class SpellingGrammarChecker extends JFrame {
                         length = toRemove.substring(toRemove.indexOf("length")+8, toRemove.indexOf("length") + 13).replaceAll("([, A-Za-z\"])", "");
                         System.out.println("offset:" + offset);
                         System.out.println("length:" + length);
-                        
+
 			offsetLengthMap.put(offset, length);
-			
+
                         underline[underlineX] = Integer.parseInt(offset);
                         underline[underlineX+1] = Integer.parseInt(length);
                         underlineX+=2;
@@ -381,14 +363,14 @@ public class SpellingGrammarChecker extends JFrame {
 		System.out.println("toRemove: " +  toRemove);
             }
         }
-       
- 
+
+
        	//Added by Spencer
-	//Add underlines to words that are incorrect 
+	//Add underlines to words that are incorrect
 	String inputText = textArea.getText();
 	String text = inputText;
 	for (Map.Entry entry : offsetLengthMap.entrySet()){
-		System.out.println("Key: " + entry.getKey());	
+		System.out.println("Key: " + entry.getKey());
 		System.out.println("Value: " + entry.getValue());
 		String offsetString = String.valueOf(entry.getKey());
 		String lengthString = String.valueOf(entry.getValue());
@@ -409,16 +391,16 @@ public class SpellingGrammarChecker extends JFrame {
 
 	String[] allWords = text.split(" ");
 
-        String correctText = "";
-	
+	    String correctText = "";
+
 	//Parses out the correct words from the string
 	for (String word : allWords){
 		if ((word.indexOf("<") == -1) && (word.indexOf(">") == -1 )){
 			correctText += word + " ";
-		} 
+		}
 	}
 
-	System.out.println("correctText: " + correctText);	
+	System.out.println("correctText: " + correctText);
 	output.setText(text);
 
         String correctTextLast = "";
@@ -427,12 +409,12 @@ public class SpellingGrammarChecker extends JFrame {
 	//Added by Monis
         for (int x=0; x<messageCount*2; x+=2) {
 
-            inputText = textArea.getText();	    
+            inputText = textArea.getText();
             correctTextLast = inputText.substring(underline[x] + underline[x+1], inputText.length());
 
         }
 
- 
+
         final String correctTextNew = correctText;
         final String correctTextLastNew = correctTextLast;
         for (int x = 0; x < messageCount; x++){
@@ -442,13 +424,13 @@ public class SpellingGrammarChecker extends JFrame {
                 public void actionPerformed(ActionEvent event) {
                     System.out.println("Popup menu item ["
                             + event.getActionCommand() + "] was pressed.");
-		
-		    System.out.println(event.getActionCommand());
 
                     //Replace error with correction
                     output.setText("<html><body style='width: 450px'>" + correctTextNew
                             + event.getActionCommand()
                             + correctTextLastNew + "</body></html>");
+                    //clears items from popup menu
+                    popup.removeAll();
                 }
             };
 
@@ -458,20 +440,18 @@ public class SpellingGrammarChecker extends JFrame {
                 System.out.println(w);
                 //suggested corrections are displayed in the popup menu
                 popup.add(item = new JMenuItem(w));
-                item.setHorizontalTextPosition(JMenuItem.RIGHT);
+                item.setHorizontalTextPosition(JMenuItem.CENTER);
                 item.addActionListener(menuListener);
             }
 
             popup.setLabel("Justification");
             popup.setBorder(new BevelBorder(BevelBorder.RAISED));
             popup.addPopupMenuListener(new PopupPrintListener());
-
-            addMouseListener(new MousePopupListener());
         }
     }
     //Added by Davis
-    private static void addPopup(Component component, final JPopupMenu popup) {
-        component.addMouseListener(new MouseAdapter() {
+    private static void addPopup(final JTextPane output, final JPopupMenu popup) {
+        output.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     showMenu(e);
@@ -483,8 +463,49 @@ public class SpellingGrammarChecker extends JFrame {
                 }
             }
             private void showMenu(MouseEvent e) {
-                popup.show(e.getComponent(), e.getX(), e.getY());
+                popup.show(output, e.getX(), e.getY());
             }
         });
     }
+
+    //Added by Davis
+    /*
+    * Possible way to get the position of specific words in the output
+    * See TextComponentWordAtCaretUtil.java file for an example (have to move it to src folder to run)
+    * I was having trouble implementing it with the popup menu we already have
+    * */
+//    private static MouseListener createPopupListener(JTextComponent tc) {
+//        JPopupMenu popupMenu = new JPopupMenu();
+//        JMenuItem menu = popupMenu.add(new JMenuItem("Test"));
+//        popupMenu.add(menu);
+//        menu.addActionListener(e -> {
+//            String word = getWordAtCaret(tc);
+//            System.out.println("Selected word:" + word);
+//
+//        });
+//        return new MouseAdapter() {
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//                if (e.isPopupTrigger()) {
+//                    int rightClickPosition = tc.viewToModel2D(e.getPoint());
+//                    tc.setCaretPosition(rightClickPosition);
+//                    popupMenu.show(tc, e.getX(), e.getY());
+//                }
+//            }
+//        };
+//    }
+//
+//
+//    private static String getWordAtCaret(JTextComponent tc) {
+//        try {
+//            int caretPosition = tc.getCaretPosition();
+//            int start = Utilities.getWordStart(tc, caretPosition);
+//            int end = Utilities.getWordEnd(tc, caretPosition);
+//            return tc.getText(start, end - start);
+//        } catch (BadLocationException e) {
+//            System.err.println(e);
+//        }
+//
+//        return null;
+//    }
 }
