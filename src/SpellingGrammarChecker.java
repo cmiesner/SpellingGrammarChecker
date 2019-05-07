@@ -108,7 +108,9 @@ public class SpellingGrammarChecker extends JFrame {
 
                                 String fileAsString = buffer.toString();
                                 fileAsString = fileAsString.replaceAll("\\n", " ");
+				fileAsString = fileAsString.replaceAll("\\t", " ");
                                 System.out.println(fileAsString);
+				textArea.setText(fileAsString);
 
                                 makeConnection(fileAsString);
                             } catch (Exception exc) {
