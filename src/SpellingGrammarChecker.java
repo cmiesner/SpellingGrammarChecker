@@ -76,13 +76,19 @@ public class SpellingGrammarChecker extends JFrame {
 
         JButton btnSubmit = new JButton("Submit");
 
+
+	//public Boolean isFileInput = false;	
+
+	//File inputFile = "";
+
         //Spencer Added
+	//Runs what is in the input field through the api
         btnSubmit.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
                         String contents = textArea.getText();
                         System.out.println(contents);
-
+	
                         try {
                             //Parse each sentence of the text area
                             contents = contents.replaceAll("\\n", " ");
@@ -95,17 +101,19 @@ public class SpellingGrammarChecker extends JFrame {
         );
 
         //Spencer Added
+	//outputs a selected file to the input field
         btnSelectFile.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
                         final JFileChooser fc = new JFileChooser();
 
                         int returnVal = fc.showOpenDialog(SpellingGrammarChecker.this);
-
-                        //Verify that the program is allowed to open the file chooser
+			
+	                        //Verify that the program is allowed to open the file chooser
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            String filePath = file.getAbsolutePath();
+                            File inputFile = fc.getSelectedFile();
+			    System.out.println(inputFile);
+                            String filePath = inputFile.getAbsolutePath();
                             textField.setText(filePath);
 
                             //Read the selected file and parse out each sentence
@@ -163,7 +171,77 @@ public class SpellingGrammarChecker extends JFrame {
         btnWriteToFile.addActionListener(
                 new ActionListener(){
                     public void actionPerformed(ActionEvent e) {
-                        //TODO add functionality
+                   	//TODO
+			//Get contents from the output box
+				//need to parse out of html
+			//write those contents to a new file that
+			//file example (OGfilePath)Revised.txt
+			//or just the first few words in the output
+			//Will always use .txt
+
+
+ 			String toFile = output.getText();
+			String textFieldContents = textField.getText();
+
+			toFile = toFile.replaceAll("\\<[^>]*>","");			
+			toFile = toFile.replaceAll("\\n", "");
+			toFile = toFile.replaceAll("\\t", "");
+			toFile = toFile.trim();
+			//Check if a file was input
+			if (textFieldContents.indexOf("File Location") == 0){
+				//get first few words and make it a file
+				int counter = 0;
+				String createdFilePath = "";
+				for (String word : toFile.split(" ")){
+					counter++;
+					if (counter == 4){
+						createdFilePath = createdFilePath + ".txt";
+						createdFilePath = System.getProperty("user.dir") + "/" + createdFilePath;
+						textField.setText(createdFilePath);
+						break;
+					}
+					if (counter == 1){
+						createdFilePath = createdFilePath +  word;
+					} else {
+						createdFilePath = createdFilePath + "_" +  word;
+					}
+				}
+				File revisedFile = new File(createdFilePath);
+				try{
+					FileWriter writer = new FileWriter(revisedFile);
+					writer.write(toFile);
+					writer.close();
+				} catch (Exception err){
+					System.out.println(err);
+				}
+				System.out.println(createdFilePath);
+			}else{
+				//remove the last part of the file
+				//example /User/bin/seniorProject/test.txt = /User/bin/seniorProject/test
+				//then add Revised.txt to the end
+				String newFilePath = "";
+				if (textFieldContents.indexOf(".txt") >= 0){
+					newFilePath = textFieldContents.replace(".txt", "Revised.txt");
+					System.out.println(newFilePath);
+				} else if (textFieldContents.indexOf(".pdf") >= 0){
+                                        newFilePath = textFieldContents.replace(".pdf", "Revised.txt");
+                                        System.out.println(newFilePath);
+				} else if (textFieldContents.indexOf(".docx") >= 0){
+                                        newFilePath = textFieldContents.replace(".docx", "Revised.txt");
+                                        System.out.println(newFilePath);
+                                } else if (textFieldContents.indexOf(".doc") >= 0){
+                                        newFilePath = textFieldContents.replace(".doc", "Revised.txt");
+                                        System.out.println(newFilePath);
+                                }
+				File revisedFile = new File(newFilePath);
+				try{
+					FileWriter writer = new FileWriter(revisedFile);
+					writer.write(toFile);
+					writer.close();
+				} catch (Exception err){
+					System.out.println(err);
+				}	
+			}
                     }
                 }
         );
@@ -338,18 +416,6 @@ public class SpellingGrammarChecker extends JFrame {
                             i++;
                         }
                     }
-/*
-			System.out.println(tempResponse);
-			System.out.println(tempResponse.indexOf("Possible spelling mistake found"));
-			int count = 0;
-			int fromIndex = 0;
-			while ((fromIndex = tempResponse.indexOf("Possible spelling mistake found", fromIndex))!= -1){
-				System.out.println("Found at index: "+ fromIndex);
-				count++;
-				fromIndex++;
-			}
-			System.out.println("Total count: " + count);
-*/
                     //added by Cole
                     //prints all text from the textArea in the output JLabel.
                     String offset = "";
@@ -360,7 +426,8 @@ public class SpellingGrammarChecker extends JFrame {
                         length = toRemove.substring(toRemove.indexOf("length")+8, toRemove.indexOf("length") + 13).replaceAll("([, A-Za-z\"])", "");
                         System.out.println("offset:" + offset);
                         System.out.println("length:" + length);
-
+			
+			//Spencer added the line below
                         offsetLengthMap.put(offset, length);
 
                         underline[underlineX] = Integer.parseInt(offset);
@@ -393,11 +460,9 @@ public class SpellingGrammarChecker extends JFrame {
 
             inputText = textArea.getText();
             String toUnderline = inputText.substring(offset, length+offset);
-            System.out.println("To Underline: " + toUnderline);
 
             String underlineFormat = "<span color=\"red\"><U>" + toUnderline + "</U></span>";
 
-//		System.out.println("Underline Format: " + underlineFormat + " To Underline: " + toUnderline);
 
             text = text.replace(toUnderline, underlineFormat);
         }
